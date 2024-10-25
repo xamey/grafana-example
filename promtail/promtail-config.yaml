@@ -1,0 +1,35 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://localhost:3100/loki/api/v1/push
+
+scrape_configs:
+- job_name: system
+  static_configs:
+    - targets:
+        - localhost
+      labels:
+        job: varlogs  # A `job` label is fairly standard in prometheus and useful for linking metrics and logs.
+        host: yourhost # A `host` label will help identify logs from this machine vs others
+        __path__: /var/log/*.log  # The path matching uses a third party library: https://github.com/bmatcuk/doublestar
+
+- job_name: devlog
+  static_configs:
+    - targets:
+        - localhost
+      labels:
+        job: devlog
+        __path__: /Users/maxecalle/Desktop/Platform/back/log/development.log
+
+- job_name: rails
+  scheme: http
+  metrics_path: /metrics
+  static_configs:
+    - targets:
+        - 'localhost:3000'
+
